@@ -1,17 +1,65 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useMutation, useQuery } from '@apollo/client';
+import { CREATE_NOTE, UPDATE_NOTE, GET_NOTES } from '../../../src/graphql/queries';
 
 export default function RecipeNotesScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const [notes, setNotes] = useState('');
   const [recipeTitle, setRecipeTitle] = useState('Sample Recipe');
+  const [existingNoteId, setExistingNoteId] = useState<string | null>(null);
 
-  const handleSaveNotes = () => {
-    // In a real app, you would save to your backend
-    console.log('Saving notes for recipe:', { id, notes });
-    router.back();
+  // Query existing notes for this recipe
+  const { data: notesData, loading: notesLoading, error: notesError } = useQuery(GET_NOTES, {
+    variables: { recipeId: id },
+    skip: !id,
+  });
+
+  // Mutations
+  const [createNote, { loading: createLoading }] = useMutation(CREATE_NOTE);
+  const [updateNote, { loading: updateLoading }] = useMutation(UPDATE_NOTE);
+
+  useEffect(() => {
+    if (notesData?.notes && notesData.notes.length > 0) {
+      const latestNote = notesData.notes[0];
+      setNotes(latestNote.content);
+      setExistingNoteId(latestNote.id);
+    }
+  }, [notesData]);
+
+  const handleSaveNotes = async () => {
+    if (!notes.trim()) {
+      alert('Please enter some notes');
+      return;
+    }
+
+    try {
+      if (existingNoteId) {
+        // Update existing note
+        await updateNote({
+          variables: {
+            id: existingNoteId,
+            content: notes,
+          },
+        });
+      } else {
+        // Create new note
+        await createNote({
+          variables: {
+            input: {
+              recipeId: id,
+              content: notes,
+            },
+          },
+        });
+      }
+      router.back();
+    } catch (error) {
+      console.error('Error saving notes:', error);
+      alert('Failed to save notes. Please try again.');
+    }
   };
 
   return (
