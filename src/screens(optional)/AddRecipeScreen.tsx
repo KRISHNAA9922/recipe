@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useMutation } from '@apollo/client';
 import { CREATE_RECIPE } from '../graphql/queries';
-import { RootStackParamList } from '../navigation/types';
+import { RootStackParamList } from '../navigation(optional)/types';
 import { RecipeInput } from '../types';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;

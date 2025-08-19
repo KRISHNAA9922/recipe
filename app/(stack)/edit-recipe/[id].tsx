@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useQuery, useMutation } from '@apollo/client';
 import { GET_RECIPE, UPDATE_RECIPE } from '../../../src/graphql/queries';
@@ -12,52 +12,60 @@ export default function EditRecipeScreen() {
   const [description, setDescription] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [instructions, setInstructions] = useState('');
+  const [category, setCategory] = useState('lunch');
 
-  // Fetch recipe data
-  const { loading, error, data } = useQuery(GET_RECIPE, {
+  const { loading: loadingRecipe, error: errorRecipe, data } = useQuery(GET_RECIPE, {
     variables: { id },
+    onCompleted: (data) => {
+      if (data?.recipe) {
+        setTitle(data.recipe.title);
+        setDescription(data.recipe.notes || '');
+        setCategory(data.recipe.category);
+        setIngredients(data.recipe.ingredients.join('\n'));
+        setInstructions(data.recipe.steps.join('\n'));
+      }
+    }
   });
 
-  // Update recipe mutation
   const [updateRecipe, { loading: updating }] = useMutation(UPDATE_RECIPE, {
-    variables: { id },
     onCompleted: () => {
+      Alert.alert('Success', 'Recipe updated successfully!');
       router.back();
     },
     onError: (error) => {
-      console.error('Error updating recipe:', error);
-    },
+      Alert.alert('Error', `Failed to update recipe: ${error.message}`);
+    }
   });
 
-  useEffect(() => {
-    if (data?.recipe) {
-      setTitle(data.recipe.title);
-      setDescription(data.recipe.description);
-      setIngredients(data.recipe.ingredients.join('\n'));
-      setInstructions(data.recipe.steps.join('\n'));
-    }
-  }, [data]);
-
   const handleSave = async () => {
+    if (!title.trim() || !ingredients.trim() || !instructions.trim()) {
+      Alert.alert('Error', 'Please fill in all required fields');
+      return;
+    }
+
     try {
+      const ingredientsArray = ingredients.split('\n').filter(i => i.trim());
+      const stepsArray = instructions.split('\n').filter(i => i.trim());
+
       await updateRecipe({
         variables: {
           id,
           input: {
-            title,
-            description,
-            ingredients: ingredients.split('\n').filter(i => i.trim()),
-            steps: instructions.split('\n').filter(i => i.trim()),
-            category: data?.recipe?.category || 'General',
-          },
-        },
+            title: title.trim(),
+            ingredients: ingredientsArray,
+            steps: stepsArray,
+            category,
+            notes: description.trim(),
+            image: data?.recipe?.image || ''
+          }
+        }
       });
     } catch (error) {
       console.error('Error updating recipe:', error);
     }
   };
 
-  if (loading) {
+  if (loadingRecipe) {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color="#007AFF" />
@@ -66,10 +74,10 @@ export default function EditRecipeScreen() {
     );
   }
 
-  if (error) {
+  if (errorRecipe) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>Error loading recipe: {error.message}</Text>
+        <Text style={styles.errorText}>Error loading recipe: {errorRecipe.message}</Text>
       </View>
     );
   }
@@ -79,12 +87,20 @@ export default function EditRecipeScreen() {
       <Text style={styles.title}>Edit Recipe</Text>
       
       <View style={styles.form}>
-        <Text style={styles.label}>Recipe Title</Text>
+        <Text style={styles.label}>Recipe Title *</Text>
         <TextInput
           style={styles.input}
           value={title}
           onChangeText={setTitle}
           placeholder="Enter recipe title"
+        />
+        
+        <Text style={styles.label}>Category *</Text>
+        <TextInput
+          style={styles.input}
+          value={category}
+          onChangeText={setCategory}
+          placeholder="e.g., breakfast, lunch, dinner, dessert"
         />
         
         <Text style={styles.label}>Description</Text>
@@ -96,26 +112,32 @@ export default function EditRecipeScreen() {
           multiline
         />
         
-        <Text style={styles.label}>Ingredients</Text>
+        <Text style={styles.label}>Ingredients * (one per line)</Text>
         <TextInput
           style={[styles.input, styles.textArea]}
           value={ingredients}
           onChangeText={setIngredients}
-          placeholder="List ingredients, one per line"
+          placeholder="e.g., 2 cups flour&#10;1 tsp salt&#10;3 eggs"
           multiline
         />
         
-        <Text style={styles.label}>Instructions</Text>
+        <Text style={styles.label}>Instructions * (one step per line)</Text>
         <TextInput
           style={[styles.input, styles.textArea]}
           value={instructions}
           onChangeText={setInstructions}
-          placeholder="Step-by-step instructions"
+          placeholder="e.g., Preheat oven to 350°F&#10;Mix dry ingredients&#10;Add wet ingredients"
           multiline
         />
         
-        <TouchableOpacity style={styles.saveButton} onPress={handleSave} disabled={updating}>
-          <Text style={styles.saveButtonText}>{updating ? 'Saving...' : 'Save Recipe'}</Text>
+        <TouchableOpacity 
+          style={[styles.saveButton, updating && styles.disabledButton]} 
+          onPress={handleSave}
+          disabled={updating}
+        >
+          <Text style={styles.saveButtonText}>
+            {updating ? 'Updating...' : 'Update Recipe'}
+          </Text>
         </TouchableOpacity>
         
         <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
@@ -181,21 +203,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
+  disabledButton: {
+    backgroundColor: '#ccc',
+  },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    padding: 20,
   },
   loadingText: {
-    marginTop: 10,
     fontSize: 16,
     color: '#666',
+    marginTop: 10,
   },
   errorText: {
     fontSize: 16,
-    color: 'red',
+    color: '#ff3b30',
     textAlign: 'center',
-    padding: 20,
   },
 });

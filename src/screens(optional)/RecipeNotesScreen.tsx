@@ -3,7 +3,7 @@ import { ScrollView, YStack, XStack, Text, Button, TextArea, Card } from 'tamagu
 import { useQuery, useMutation } from '@apollo/client';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/types';
+import { RootStackParamList } from '../navigation(optional)/types';
 import { GET_NOTES, CREATE_NOTE, DELETE_NOTE } from '../graphql/queries';
 import { Note } from '../types';
 
