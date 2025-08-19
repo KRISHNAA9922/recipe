@@ -5,13 +5,12 @@ import { TamaguiProvider } from 'tamagui';
 import { ApolloProvider } from '@apollo/client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { RootStackParamList } from './src/navigation/types';
-import tamaguiConfig from './tamagui.config';
-import { apolloClient } from './src/services/apollo';
-import { queryClient } from './src/services/rest';
-import { RootNavigator } from './src/navigation/RootNavigator';
 
-
+import tamaguiConfig from './themes/tamagui.config';
+import { apolloClient } from './services/apollo';
+import { queryClient } from './services/rest';
+import { RootStackParamList } from './navigation/types';
+import { RootNavigator } from './navigation/RootNavigator';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

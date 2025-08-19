@@ -2,6 +2,8 @@
 
 # dependencies
 node_modules/
+*/node_modules/
+**/node_modules/
 
 # Expo
 .expo/
@@ -32,6 +34,117 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+.env.development
+.env.test
+.env.production
 
 # typescript
 *.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# React Native
+android/
+ios/
+*.keystore
+*.p12
+*.key
+*.mobileprovision
+*.hprof
+
+# Build outputs
+build/
+*.apk
+*.aab
+*.ipa
+*.xcarchive
+*.dSYM.zip
+*.dSYM
+
+# CocoaPods
+ios/Pods/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Bundle artifact
+*.jsbundle
+
+# Ruby
+.ruby-version
+
+# CocoaPods
+ios/Pods/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Project specific
+TODO_COMPLETED.md
+TODO.md
+backend/graphql-server/.env
+backend/rest-server/.env
