@@ -1,146 +1,160 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+// app/(stack)/recipe-notes/[id].tsx
+
+import React, { useContext, useEffect, useState } from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { useMutation, useQuery } from '@apollo/client';
-import { CREATE_NOTE, UPDATE_NOTE, GET_NOTES } from '../../../src/graphql/queries';
+import { useQuery, useMutation } from '@apollo/client';
+import {
+  Button,
+  H2,
+  Input,
+  Label,
+  Paragraph,
+  ScrollView,
+  Spinner,
+  XStack,
+  YStack,
+  useTheme,
+  AlertDialog,
+} from 'tamagui';
+import { ArrowLeft, Save } from '@tamagui/lucide-icons';
+
+import { CREATE_NOTE, UPDATE_NOTE, GET_NOTES, GET_RECIPE } from '../../../src/graphql/queries';
+import { ThemeContext } from '../../_layout'; // Light / dark mode
 
 export default function RecipeNotesScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const [notes, setNotes] = useState('');
-  const [recipeTitle, setRecipeTitle] = useState('Sample Recipe');
-  const [existingNoteId, setExistingNoteId] = useState<string | null>(null);
+  const { theme } = useContext(ThemeContext);
+  const tamaguiTheme = useTheme();
 
-  // Query existing notes for this recipe
-  const { data: notesData, loading: notesLoading, error: notesError } = useQuery(GET_NOTES, {
-    variables: { recipeId: id },
+  /* ───────────────────────────────────── Local state ───────────────────────────────────── */
+  const [notes, setNotes] = useState('');
+  const [recipeTitle, setRecipeTitle] = useState('Recipe');
+  const [existingNoteId, setExistingNoteId] = useState<string | null>(null);
+  const [errorOpen, setErrorOpen] = useState(false);
+
+  /* ───────────────────────────────────── Queries ───────────────────────────────────────── */
+  // 1. Fetch recipe title (optional but nicer UX)
+  useQuery(GET_RECIPE, {
+    variables: { id },
     skip: !id,
+    onCompleted: ({ recipe }) => {
+      if (recipe?.title) setRecipeTitle(recipe.title);
+    },
   });
 
-  // Mutations
+  // 2. Fetch existing notes
+  const { loading: notesLoading, error: notesError } = useQuery(GET_NOTES, {
+    variables: { recipeId: id },
+    skip: !id,
+    onCompleted: ({ notes }) => {
+      if (notes?.length) {
+        const latest = notes[0];
+        setNotes(latest.content);
+        setExistingNoteId(latest.id);
+      }
+    },
+  });
+
+  /* ───────────────────────────────────── Mutations ─────────────────────────────────────── */
   const [createNote, { loading: createLoading }] = useMutation(CREATE_NOTE);
   const [updateNote, { loading: updateLoading }] = useMutation(UPDATE_NOTE);
 
-  useEffect(() => {
-    if (notesData?.notes && notesData.notes.length > 0) {
-      const latestNote = notesData.notes[0];
-      setNotes(latestNote.content);
-      setExistingNoteId(latestNote.id);
-    }
-  }, [notesData]);
+  const saving = createLoading || updateLoading;
 
   const handleSaveNotes = async () => {
     if (!notes.trim()) {
-      alert('Please enter some notes');
+      setErrorOpen(true);
       return;
     }
-
     try {
       if (existingNoteId) {
-        // Update existing note
-        await updateNote({
-          variables: {
-            id: existingNoteId,
-            content: notes,
-          },
-        });
+        await updateNote({ variables: { id: existingNoteId, content: notes } });
       } else {
-        // Create new note
-        await createNote({
-          variables: {
-            input: {
-              recipeId: id,
-              content: notes,
-            },
-          },
-        });
+        await createNote({ variables: { input: { recipeId: id, content: notes } } });
       }
       router.back();
-    } catch (error) {
-      console.error('Error saving notes:', error);
-      alert('Failed to save notes. Please try again.');
+    } catch (err) {
+      console.error(err);
+      setErrorOpen(true);
     }
   };
 
+  /* ───────────────────────────────────── Loading & error states ────────────────────────── */
+  if (notesLoading) {
+    return (
+      <YStack f={1} jc="center" ai="center" space="$4" bg="$background">
+        <Spinner size="large" color="$accent" />
+        <Paragraph>Loading notes…</Paragraph>
+      </YStack>
+    );
+  }
+  if (notesError) {
+    return (
+      <YStack f={1} jc="center" ai="center" space="$4" bg="$background">
+        <Paragraph color="$red10">Error: {notesError.message}</Paragraph>
+      </YStack>
+    );
+  }
+
+  /* ─────────────────────────────────────────── UI ──────────────────────────────────────── */
+  const isDark = theme === 'dark';
+  const inputBg = isDark ? '$backgroundHover' : '$background';
+  const labelColor = isDark ? '$gray10' : '$gray12';
+
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>{recipeTitle} - Notes</Text>
-      
-      <View style={styles.form}>
-        <Text style={styles.label}>Your Notes</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          value={notes}
-          onChangeText={setNotes}
-          placeholder="Add your personal notes, tips, or modifications..."
-          multiline
-        />
-        
-        <TouchableOpacity style={styles.saveButton} onPress={handleSaveNotes}>
-          <Text style={styles.saveButtonText}>Save Notes</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
-          <Text style={styles.cancelButtonText}>Cancel</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    <YStack f={1} bg="$background">
+      {/* Header */}
+      <XStack ai="center" jc="space-between" p="$4" bg="$backgroundStrong" elevation="$2">
+        <Button icon={ArrowLeft} circular onPress={() => router.back()} />
+        <H2>{recipeTitle} – Notes</H2>
+        <Button icon={Save} circular onPress={handleSaveNotes} disabled={saving} />
+      </XStack>
+
+      <ScrollView>
+        <YStack space="$4" p="$4">
+          <Label color={labelColor} fontWeight="bold">
+            Your Notes
+          </Label>
+          <Input
+            value={notes}
+            onChangeText={setNotes}
+            placeholder="Add your personal notes, tips, or modifications…"
+            multiline
+            numberOfLines={8}
+            bg={inputBg}
+            borderRadius="$4"
+          />
+
+          {/* Save / Cancel */}
+          <Button
+            theme="active"
+            size="$5"
+            onPress={handleSaveNotes}
+            disabled={saving}
+            animation="bouncy"
+            pressStyle={{ scale: 0.95 }}
+          >
+            {saving ? 'Saving…' : 'Save Notes'}
+          </Button>
+          <Button theme="alt1" size="$5" onPress={() => router.back()}>
+            Cancel
+          </Button>
+        </YStack>
+      </ScrollView>
+
+      {/* Validation / Error dialog */}
+      <AlertDialog open={errorOpen} onOpenChange={setErrorOpen}>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay />
+          <AlertDialog.Content>
+            <Paragraph>Please enter some notes or check your connection.</Paragraph>
+            <AlertDialog.Action asChild>
+              <Button>OK</Button>
+            </AlertDialog.Action>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    padding: 20,
-    paddingBottom: 10,
-  },
-  form: {
-    padding: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 5,
-    marginTop: 15,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  textArea: {
-    minHeight: 200,
-    textAlignVertical: 'top',
-  },
-  saveButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    color: '#666',
-  },
-});

@@ -47,8 +47,8 @@ export default function RootLayout() {
                   <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                   {/* You can add other root-level screens here */}
                   <Stack.Screen 
-                    name="(stack)/add-recipe" // Example for a modal screen
-                    options={{ presentation: 'modal', headerShown: false }} 
+                    name="add-recipe"
+                    options={{ headerShown: false }} 
                   />
                 </Stack>
               </QueryClientProvider>
