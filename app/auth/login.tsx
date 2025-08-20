@@ -126,7 +126,7 @@ export default function LoginScreen() {
       >
         {loading ? (
           <View style={styles.buttonContent}>
-            <ActivityIndicator color="#fff" size="small" />
+            <ActivityIndicator color="#17d7c4ff" size="small" />
             <Text style={[styles.buttonText, { marginLeft: 8 }]}>Logging in...</Text>
           </View>
         ) : (
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#17d7c4ff',
   },
   title: {
     fontSize: 28,
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#161515ff',
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,

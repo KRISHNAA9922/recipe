@@ -14,10 +14,10 @@ export default function TabLayout() {
   // Define dynamic colors based on theme
   const activeTintColor = tamaguiTheme.accent?.val || (theme === 'dark' ? '#00BFFF' : '#007AFF'); // Brighter blue for dark mode
   const inactiveTintColor = tamaguiTheme.color5?.val || (theme === 'dark' ? '#A9A9A9' : '#808080');
-  const tabBarBackground = theme === 'dark' ? '#1A1A1A' : '#FFFFFF';
-  const headerBackground = theme === 'dark' ? '#000000' : '#F8F9FA';
-  const headerTint = theme === 'dark' ? '#FFFFFF' : '#333333';
-  const borderColor = theme === 'dark' ? '#333333' : '#E0E0E0'; // Subtle border for light mode
+  const tabBarBackground = theme === 'dark' ? '#1A1A1A' : '#616161ff';
+  const headerBackground = theme === 'dark' ? '#000000' : '#616161ff';
+  const headerTint = theme === 'dark' ? '#616161ff' : '#333333';
+  const borderColor = theme === 'dark' ? '#333333' : '#616161ff'; // Subtle border for light mode
 
   return (
     <AuthGuard>

@@ -1,8 +1,8 @@
-// app/(stack)/recipe/[id].tsx (or your file path; adjust for dynamic routing)
-
-import React, { useContext } from 'react';
+// app/(stack)/recipe/[id].tsx
+import React, { useContext, useCallback } from 'react';
 import { useQuery } from '@apollo/client';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   Button,
   H2,
@@ -25,9 +25,16 @@ export default function RecipeDetailScreen() {
   const { theme } = useContext(ThemeContext);
   const tamaguiTheme = useTheme();
 
-  const { loading, error, data } = useQuery(GET_RECIPE, {
+  const { loading, error, data, refetch } = useQuery(GET_RECIPE, {
     variables: { id },
   });
+
+  // Refetch data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const handleEditRecipe = () => {
     router.push(`/edit-recipe/${id}`);
@@ -69,7 +76,7 @@ export default function RecipeDetailScreen() {
     ? new Date(parseInt(recipe.updatedAt)).toLocaleDateString()
     : 'N/A';
 
-    console.log('Recipe Data:', recipe); // Debugging output
+  console.log('Recipe Data:', recipe); // Debugging output
 
   return (
     <ScrollView bg="$background" contentContainerStyle={{ paddingTop: 0 }}>
