@@ -3,7 +3,7 @@
 import { Tabs } from 'expo-router';
 import React, { useContext } from 'react';
 import { useTheme } from 'tamagui';
-import { Home, Plus } from '@tamagui/lucide-icons';
+import { Home, Plus, User } from '@tamagui/lucide-icons';
 import { ThemeContext } from '../../_layout'; // Import from root layout for theme access
 import { AuthGuard } from '../../../src/components/auth/AuthGuard';
 
@@ -69,6 +69,20 @@ export default function TabLayout() {
             tabBarLabel: 'Add',
             tabBarIcon: ({ color, size, focused }) => (
               <Plus
+                color={color}
+                size={size}
+                strokeWidth={focused ? 2.5 : 1.75}
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: 'Profile',
+            tabBarLabel: 'Profile',
+            tabBarIcon: ({ color, size, focused }) => (
+              <User
                 color={color}
                 size={size}
                 strokeWidth={focused ? 2.5 : 1.75}

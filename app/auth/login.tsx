@@ -33,7 +33,7 @@ export default function LoginScreen() {
         await authLogin(data.login.token, data.login.user);
         
         // Navigate to home (tabs index) after successful login
-        router.replace('/(tabs)/');
+        router.replace('/home/(tabs)/');
       }
     } catch (error: any) {
       Alert.alert('Login Error', error.message || 'Failed to login');
