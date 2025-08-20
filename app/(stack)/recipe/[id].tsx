@@ -61,6 +61,16 @@ export default function RecipeDetailScreen() {
   const sectionBg = isDark ? '$backgroundHover' : '$backgroundStrong';
   const textColor = '$color';
 
+  // Handle MongoDB date format (extract $date string if it's an object)
+  const createdDate = recipe.createdAt
+    ? new Date(parseInt(recipe.createdAt)).toLocaleDateString()
+    : 'N/A';
+  const updatedDate = recipe.updatedAt
+    ? new Date(parseInt(recipe.updatedAt)).toLocaleDateString()
+    : 'N/A';
+
+    console.log('Recipe Data:', recipe); // Debugging output
+
   return (
     <ScrollView bg="$background">
       {/* Header Section */}
@@ -73,7 +83,6 @@ export default function RecipeDetailScreen() {
             resizeMode="cover"
           />
         )}
-        {recipe.notes && <Paragraph color="$color10">{recipe.notes}</Paragraph>}
       </YStack>
 
       {/* Ingredients Section */}
@@ -92,12 +101,22 @@ export default function RecipeDetailScreen() {
         ))}
       </YStack>
 
+      {/* Notes Section */}
+      <YStack space="$2" p="$4" bg={sectionBg}>
+        <H2 color={textColor}>Notes</H2>
+        {recipe.notes ? (
+          <Paragraph color="$color11">{recipe.notes}</Paragraph>
+        ) : (
+          <Paragraph color="$color10" fontStyle="italic">No notes added yet.</Paragraph>
+        )}
+      </YStack>
+
       {/* Details Section */}
       <YStack space="$2" p="$4" bg={sectionBg}>
         <H2 color={textColor}>Details</H2>
         <Paragraph color="$color11">Category: {recipe.category}</Paragraph>
-        <Paragraph color="$color11">Created: {new Date(recipe.createdAt).toLocaleDateString()}</Paragraph>
-        <Paragraph color="$color11">Last Updated: {new Date(recipe.updatedAt).toLocaleDateString()}</Paragraph>
+        <Paragraph color="$color11">Created: {createdDate}</Paragraph>
+        <Paragraph color="$color11">Last Updated: {updatedDate}</Paragraph>
       </YStack>
 
       {/* Actions */}
