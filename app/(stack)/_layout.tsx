@@ -6,21 +6,21 @@ export default function StackLayout() {
       <Stack.Screen 
         name="index" 
         options={{ 
-          headerShown: false
-        }} 
+    header: () => null 
+  }} 
       />
       <Stack.Screen 
         name="login" 
         options={{ 
           title: 'Login',
-          headerShown: false
+          header: () => null 
         }} 
       />
       <Stack.Screen 
         name="register" 
         options={{ 
           title: 'Register',
-          headerShown: false
+          header: () => null
         }} 
       />
     </Stack>

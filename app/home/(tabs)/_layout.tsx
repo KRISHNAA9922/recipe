@@ -45,7 +45,7 @@ export default function TabLayout() {
             fontWeight: 'bold',
             fontSize: 20,
           },
-          headerShown: false // Ensure headers are hidden
+          header: () => null 
         }}
       >
         <Tabs.Screen
