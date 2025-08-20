@@ -11,7 +11,7 @@ export default function StackIndex() {
     if (!loading) {
       if (user) {
         // User is authenticated, redirect to home (tabs)
-        router.replace('/(tabs)');
+        router.replace('/home');
       } else {
         // User is not authenticated, redirect to login
         router.replace('/login');

@@ -72,7 +72,7 @@ export default function RecipeDetailScreen() {
     console.log('Recipe Data:', recipe); // Debugging output
 
   return (
-    <ScrollView bg="$background">
+    <ScrollView bg="$background" contentContainerStyle={{ paddingTop: 0 }}>
       {/* Header Section */}
       <YStack space="$4" p="$4" ai="center" bg={sectionBg}>
         <H2 color={textColor}>{recipe.title}</H2>

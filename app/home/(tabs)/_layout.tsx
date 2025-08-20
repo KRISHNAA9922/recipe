@@ -4,8 +4,8 @@ import { Tabs } from 'expo-router';
 import React, { useContext } from 'react';
 import { useTheme } from 'tamagui';
 import { Home, Plus } from '@tamagui/lucide-icons';
-import { ThemeContext } from '../_layout'; // Import from root layout for theme access
-import { AuthGuard } from '../../src/components/auth/AuthGuard';
+import { ThemeContext } from '../../_layout'; // Import from root layout for theme access
+import { AuthGuard } from '../../../src/components/auth/AuthGuard';
 
 export default function TabLayout() {
   const tamaguiTheme = useTheme(); // Get current Tamagui theme tokens
@@ -45,7 +45,7 @@ export default function TabLayout() {
             fontWeight: 'bold',
             fontSize: 20,
           },
-          headerShown: false, // Hide headers for minimalism; override per screen if needed
+          headerShown: false // Ensure headers are hidden
         }}
       >
         <Tabs.Screen

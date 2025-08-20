@@ -135,7 +135,7 @@ export default function HomeScreen() {
       </ScrollView>
 
       {/* FAB */}
-      <Button
+      {/* <Button
         icon={Plus}
         circular
         size="$6"
@@ -151,7 +151,7 @@ export default function HomeScreen() {
         shadowColor="$shadowColor"
         shadowOpacity={0.25}
         shadowRadius={6}
-      />
+      /> */}
     </YStack>
   );
 }

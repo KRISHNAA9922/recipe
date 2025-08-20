@@ -17,8 +17,8 @@ import {
 } from 'tamagui';
 import { ArrowLeft, Save } from '@tamagui/lucide-icons';
 
-import { CREATE_RECIPE } from '../../src/graphql/queries';
-import { ThemeContext } from '../_layout'; // Import for light/dark mode
+import { CREATE_RECIPE } from '../../../src/graphql/queries';
+import { ThemeContext } from '../../_layout'; // Import for light/dark mode
 
 export default function AddRecipeScreen() {
   const router = useRouter();
