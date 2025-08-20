@@ -1,47 +1,26 @@
-import {Stack } from 'expo-router';
-import React, { useContext } from 'react';
-import { Button, useTheme } from 'tamagui';
-import { ThemeContext } from '../_layout'; // Import from root layout for theme access
+import { Stack } from 'expo-router';
 
 export default function StackLayout() {
-  const tamaguiTheme = useTheme(); // Get current Tamagui theme tokens
-  const { theme } = useContext(ThemeContext); // Get light/dark mode
-
-  // Define dynamic header styles based on theme
-  const headerBackground = theme === 'dark' ? '#1A1A1A' : '#F8F9FA';
-  const headerTint = theme === 'dark' ? '#FFFFFF' : '#333333';
-
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        headerStyle: {
-          backgroundColor: headerBackground,
-        },
-        headerTintColor: headerTint,
-        headerTitleStyle: {
-          fontWeight: 'bold',
-          fontSize: 20,
-        },
-        presentation: 'card', // Default to card for smooth transitions
-      }}
-    >
+    <Stack>
       <Stack.Screen 
-        name="recipe/[id]" 
+        name="index" 
         options={{ 
-          title: 'Recipe Details', 
+          headerShown: false
         }} 
       />
       <Stack.Screen 
-        name="edit-recipe/[id]" 
+        name="login" 
         options={{ 
-          title: 'Edit Recipe',
+          title: 'Login',
+          headerShown: false
         }} 
       />
       <Stack.Screen 
-        name="recipe-notes/[id]" 
+        name="register" 
         options={{ 
-          title: 'Recipe Notes',
+          title: 'Register',
+          headerShown: false
         }} 
       />
     </Stack>

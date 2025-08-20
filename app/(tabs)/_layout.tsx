@@ -5,6 +5,7 @@ import React, { useContext } from 'react';
 import { useTheme } from 'tamagui';
 import { Home, Plus } from '@tamagui/lucide-icons';
 import { ThemeContext } from '../_layout'; // Import from root layout for theme access
+import { AuthGuard } from '../../src/components/auth/AuthGuard';
 
 export default function TabLayout() {
   const tamaguiTheme = useTheme(); // Get current Tamagui theme tokens
@@ -19,61 +20,63 @@ export default function TabLayout() {
   const borderColor = theme === 'dark' ? '#333333' : '#E0E0E0'; // Subtle border for light mode
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: activeTintColor,
-        tabBarInactiveTintColor: inactiveTintColor,
-        tabBarStyle: {
-          backgroundColor: tabBarBackground,
-          borderTopColor: borderColor,
-          borderTopWidth: 1,
-          height: 60, // Taller for better touch targets
-          paddingBottom: 5, // Improve icon spacing
-        },
-        tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-        },
-        headerStyle: {
-          backgroundColor: headerBackground,
-          shadowColor: 'transparent', // Clean, flat design
-        },
-        headerTintColor: headerTint,
-        headerTitleStyle: {
-          fontWeight: 'bold',
-          fontSize: 20,
-        },
-        headerShown: false, // Hide headers for minimalism; override per screen if needed
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Recipe Book',
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Home
-              color={color}
-              size={size}
-              strokeWidth={focused ? 2.5 : 1.75} // Emphasis on active tab
-            />
-          ),
+    <AuthGuard>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: activeTintColor,
+          tabBarInactiveTintColor: inactiveTintColor,
+          tabBarStyle: {
+            backgroundColor: tabBarBackground,
+            borderTopColor: borderColor,
+            borderTopWidth: 1,
+            height: 60, // Taller for better touch targets
+            paddingBottom: 5, // Improve icon spacing
+          },
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: '600',
+          },
+          headerStyle: {
+            backgroundColor: headerBackground,
+            shadowColor: 'transparent', // Clean, flat design
+          },
+          headerTintColor: headerTint,
+          headerTitleStyle: {
+            fontWeight: 'bold',
+            fontSize: 20,
+          },
+          headerShown: false, // Hide headers for minimalism; override per screen if needed
         }}
-      />
-      <Tabs.Screen
-        name="add-recipe"
-        options={{
-          title: 'Add Recipe',
-          tabBarLabel: 'Add',
-          tabBarIcon: ({ color, size, focused }) => (
-            <Plus
-              color={color}
-              size={size}
-              strokeWidth={focused ? 2.5 : 1.75}
-            />
-          ),
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: 'Recipe Book',
+            tabBarLabel: 'Home',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Home
+                color={color}
+                size={size}
+                strokeWidth={focused ? 2.5 : 1.75} // Emphasis on active tab
+              />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="add-recipe"
+          options={{
+            title: 'Add Recipe',
+            tabBarLabel: 'Add',
+            tabBarIcon: ({ color, size, focused }) => (
+              <Plus
+                color={color}
+                size={size}
+                strokeWidth={focused ? 2.5 : 1.75}
+              />
+            ),
+          }}
+        />
+      </Tabs>
+    </AuthGuard>
   );
 }

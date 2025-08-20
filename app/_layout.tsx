@@ -9,8 +9,9 @@ import { createContext, useState, useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
 import tamaguiConfig from '../tamagui.config';
-import { apolloClient } from '../src/services/apollo';
+import apolloClient from '../src/services/apollo';
 import { queryClient } from '../src/services/rest';
+import { AuthProvider } from '../src/contexts/AuthContext';
 
 // 1. Create a Context to hold the theme state and setter function
 // This allows any component in your app to access and change the theme.
@@ -43,14 +44,13 @@ export default function RootLayout() {
           <Theme name={currentTheme}>
             <ApolloProvider client={apolloClient}>
               <QueryClientProvider client={queryClient}>
-                <Stack>
-                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                  {/* You can add other root-level screens here */}
-                  <Stack.Screen 
-                    name="add-recipe"
-                    options={{ headerShown: false }} 
-                  />
-                </Stack>
+                <AuthProvider>
+                  <Stack>
+                    <Stack.Screen name="splash" options={{ headerShown: false }} />
+                    <Stack.Screen name="(stack)" options={{ headerShown: false }} />
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                  </Stack>
+                </AuthProvider>
               </QueryClientProvider>
             </ApolloProvider>
           </Theme>

@@ -26,6 +26,11 @@ const recipeSchema = new mongoose.Schema({
   notes: {
     type: String,
     default: ''
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   }
 }, {
   timestamps: true
