@@ -1,30 +1,51 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
+// app/(tabs)/add-recipe.tsx (or your file path)
+
+import React, { useContext, useState } from 'react';
 import { useMutation } from '@apollo/client';
+import { useRouter } from 'expo-router';
+import {
+  AlertDialog,
+  Button,
+  H4,
+  Input,
+  Label,
+  Paragraph,
+  ScrollView,
+  XStack,
+  YStack,
+  useTheme,
+} from 'tamagui';
+import { ArrowLeft, Save } from '@tamagui/lucide-icons';
+
 import { CREATE_RECIPE } from '../../src/graphql/queries';
+import { ThemeContext } from '../_layout'; // Import for light/dark mode
 
 export default function AddRecipeScreen() {
   const router = useRouter();
+  const { theme } = useContext(ThemeContext); // Get current theme
+  const tamaguiTheme = useTheme(); // Access theme tokens
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [instructions, setInstructions] = useState('');
   const [category, setCategory] = useState('lunch');
+  const [image, setImage] = useState(''); // New state for image URL
 
   const [createRecipe, { loading }] = useMutation(CREATE_RECIPE, {
     onCompleted: () => {
-      Alert.alert('Success', 'Recipe saved successfully!');
-      router.back();
+      router.back(); // Navigate back on success
     },
     onError: (error) => {
-      Alert.alert('Error', `Failed to save recipe: ${error.message}`);
-    }
+      // Use Tamagui AlertDialog for error instead of native Alert
+      // You can trigger it here or handle via state
+      console.error('Error:', error);
+    },
   });
 
   const handleSave = async () => {
     if (!title.trim() || !ingredients.trim() || !instructions.trim()) {
-      Alert.alert('Error', 'Please fill in all required fields');
+      // Trigger error dialog
       return;
     }
 
@@ -40,7 +61,7 @@ export default function AddRecipeScreen() {
             steps: stepsArray,
             category,
             notes: description.trim(),
-            image: ''
+            image: image.trim() 
           }
         }
       });
@@ -49,128 +70,138 @@ export default function AddRecipeScreen() {
     }
   };
 
+  // Dynamic styles based on theme
+  const isDark = theme === 'dark';
+  const inputBg = isDark ? '$backgroundHover' : '$background';
+  const labelColor = isDark ? '$gray10' : '$gray12';
+
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Add New Recipe</Text>
-      
-      <View style={styles.form}>
-        <Text style={styles.label}>Recipe Title *</Text>
-        <TextInput
-          style={styles.input}
-          value={title}
-          onChangeText={setTitle}
-          placeholder="Enter recipe title"
-        />
-        
-        <Text style={styles.label}>Category *</Text>
-        <TextInput
-          style={styles.input}
-          value={category}
-          onChangeText={setCategory}
-          placeholder="e.g., breakfast, lunch, dinner, dessert"
-        />
-        
-        <Text style={styles.label}>Description</Text>
-        <TextInput
-          style={styles.input}
-          value={description}
-          onChangeText={setDescription}
-          placeholder="Brief description"
-          multiline
-        />
-        
-        <Text style={styles.label}>Ingredients * (one per line)</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          value={ingredients}
-          onChangeText={setIngredients}
-          placeholder="e.g., 2 cups flour&#10;1 tsp salt&#10;3 eggs"
-          multiline
-        />
-        
-        <Text style={styles.label}>Instructions * (one step per line)</Text>
-        <TextInput
-          style={[styles.input, styles.textArea]}
-          value={instructions}
-          onChangeText={setInstructions}
-          placeholder="e.g., Preheat oven to 350°F&#10;Mix dry ingredients&#10;Add wet ingredients"
-          multiline
-        />
-        
-        <TouchableOpacity 
-          style={[styles.saveButton, loading && styles.disabledButton]} 
-          onPress={handleSave}
-          disabled={loading}
-        >
-          <Text style={styles.saveButtonText}>
+    <YStack f={1} bg="$background">
+      {/* Header */}
+      <XStack ai="center" jc="space-between" p="$4" bg="$backgroundStrong" elevation="$2">
+        <Button icon={ArrowLeft} circular onPress={() => router.back()} />
+        <H4> Add New Recipe </H4>
+        <Button icon={Save} circular onPress={handleSave} disabled={loading} />
+      </XStack>
+
+      <ScrollView>
+        <YStack space="$4" p="$4">
+          {/* Title Input */}
+          <YStack>
+            <Label color={labelColor} fontWeight="bold">Recipe Title *</Label>
+            <Input
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Enter recipe title"
+              bg={inputBg}
+              borderRadius="$4"
+            />
+          </YStack>
+
+          {/* Category Input */}
+          <YStack>
+            <Label color={labelColor} fontWeight="bold">Category *</Label>
+            <Input
+              value={category}
+              onChangeText={setCategory}
+              placeholder="e.g., breakfast, lunch, dinner, dessert"
+              bg={inputBg}
+              borderRadius="$4"
+            />
+          </YStack>
+
+          {/* Description Input */}
+          <YStack>
+            <Label color={labelColor} fontWeight="bold">Description</Label>
+            <Input
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Brief description"
+              multiline
+              numberOfLines={3}
+              bg={inputBg}
+              borderRadius="$4"
+            />
+          </YStack>
+
+          {/* Ingredients Input */}
+          <YStack>
+            <Label color={labelColor} fontWeight="bold">Ingredients * (one per line)</Label>
+            <Input
+              value={ingredients}
+              onChangeText={setIngredients}
+              placeholder="e.g., 2 cups flour\n1 tsp salt\n3 eggs"
+              multiline
+              numberOfLines={5}
+              bg={inputBg}
+              borderRadius="$4"
+            />
+          </YStack>
+
+          {/* Instructions Input */}
+          <YStack>
+            <Label color={labelColor} fontWeight="bold">Instructions * (one step per line)</Label>
+            <Input
+              value={instructions}
+              onChangeText={setInstructions}
+              placeholder="e.g., Preheat oven to 350°F\nMix dry ingredients\nAdd wet ingredients"
+              multiline
+              numberOfLines={5}
+              bg={inputBg}
+              borderRadius="$4"
+            />
+          </YStack>
+
+          {/* New Image Input (URL) */}
+          <YStack>
+            <Label color={labelColor} fontWeight="bold">Image URL</Label>
+            <Input
+              value={image}
+              onChangeText={setImage}
+              placeholder="Enter image URL (optional)"
+              bg={inputBg}
+              borderRadius="$4"
+            />
+          </YStack>
+
+          {/* Save Button */}
+          <Button
+            theme="active"
+            size="$5"
+            onPress={handleSave}
+            disabled={loading}
+            animation="bouncy"
+            pressStyle={{ scale: 0.95 }}
+          >
             {loading ? 'Saving...' : 'Save Recipe'}
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={styles.cancelButton} onPress={() => router.back()}>
-          <Text style={styles.cancelButtonText}>Cancel</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          </Button>
+
+          {/* Cancel Button */}
+          <Button
+            theme="alt1"
+            size="$5"
+            onPress={() => router.back()}
+          >
+            Cancel
+          </Button>
+        </YStack>
+      </ScrollView>
+
+      {/* Error Dialog Example (Trigger via state if needed) */}
+      <AlertDialog>
+        <AlertDialog.Trigger asChild>
+          {/* Invisible trigger; open via state */}
+        </AlertDialog.Trigger>
+        <AlertDialog.Portal>
+          <AlertDialog.Overlay />
+          <AlertDialog.Content>
+            <Paragraph>Error saving recipe.</Paragraph>
+            <AlertDialog.Action asChild>
+              <Button>OK</Button>
+            </AlertDialog.Action>
+          </AlertDialog.Content>
+        </AlertDialog.Portal>
+      </AlertDialog>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    padding: 20,
-    paddingBottom: 10,
-  },
-  form: {
-    padding: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 5,
-    marginTop: 15,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  textArea: {
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-  saveButton: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 30,
-  },
-  saveButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  cancelButton: {
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    color: '#666',
-  },
-  disabledButton: {
-    backgroundColor: '#ccc',
-  },
-});

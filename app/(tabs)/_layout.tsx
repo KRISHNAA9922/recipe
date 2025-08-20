@@ -1,19 +1,49 @@
+// app/(tabs)/_layout.tsx
+
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useContext } from 'react';
+import { useTheme } from 'tamagui';
+import { Home, Plus } from '@tamagui/lucide-icons';
+import { ThemeContext } from '../_layout'; // Import from root layout for theme access
 
 export default function TabLayout() {
+  const tamaguiTheme = useTheme(); // Get current Tamagui theme tokens
+  const { theme } = useContext(ThemeContext); // Get light/dark mode
+
+  // Define dynamic colors based on theme
+  const activeTintColor = tamaguiTheme.accent?.val || (theme === 'dark' ? '#00BFFF' : '#007AFF'); // Brighter blue for dark mode
+  const inactiveTintColor = tamaguiTheme.color5?.val || (theme === 'dark' ? '#A9A9A9' : '#808080');
+  const tabBarBackground = theme === 'dark' ? '#1A1A1A' : '#FFFFFF';
+  const headerBackground = theme === 'dark' ? '#000000' : '#F8F9FA';
+  const headerTint = theme === 'dark' ? '#FFFFFF' : '#333333';
+  const borderColor = theme === 'dark' ? '#333333' : '#E0E0E0'; // Subtle border for light mode
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: 'gray',
-        headerStyle: {
-          backgroundColor: '#f8f9fa',
+        tabBarActiveTintColor: activeTintColor,
+        tabBarInactiveTintColor: inactiveTintColor,
+        tabBarStyle: {
+          backgroundColor: tabBarBackground,
+          borderTopColor: borderColor,
+          borderTopWidth: 1,
+          height: 60, // Taller for better touch targets
+          paddingBottom: 5, // Improve icon spacing
         },
-        headerTintColor: '#333',
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
+        headerStyle: {
+          backgroundColor: headerBackground,
+          shadowColor: 'transparent', // Clean, flat design
+        },
+        headerTintColor: headerTint,
         headerTitleStyle: {
           fontWeight: 'bold',
+          fontSize: 20,
         },
+        headerShown: false, // Hide headers for minimalism; override per screen if needed
       }}
     >
       <Tabs.Screen
@@ -21,6 +51,13 @@ export default function TabLayout() {
         options={{
           title: 'Recipe Book',
           tabBarLabel: 'Home',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Home
+              color={color}
+              size={size}
+              strokeWidth={focused ? 2.5 : 1.75} // Emphasis on active tab
+            />
+          ),
         }}
       />
       <Tabs.Screen
@@ -28,6 +65,13 @@ export default function TabLayout() {
         options={{
           title: 'Add Recipe',
           tabBarLabel: 'Add',
+          tabBarIcon: ({ color, size, focused }) => (
+            <Plus
+              color={color}
+              size={size}
+              strokeWidth={focused ? 2.5 : 1.75}
+            />
+          ),
         }}
       />
     </Tabs>
