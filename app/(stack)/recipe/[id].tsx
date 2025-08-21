@@ -14,7 +14,7 @@ import {
   useTheme,
   Image as TamaguiImage, // Tamagui's Image for better integration
 } from 'tamagui';
-import { Edit3, Notebook } from '@tamagui/lucide-icons';
+import { Edit3, Notebook, ArrowLeft } from '@tamagui/lucide-icons';
 
 import { GET_RECIPE } from '../../../src/graphql/queries';
 import { ThemeContext } from '../../_layout'; // Import for light/dark mode
@@ -79,76 +79,90 @@ export default function RecipeDetailScreen() {
   console.log('Recipe Data:', recipe); // Debugging output
 
   return (
-    <ScrollView bg="$background" contentContainerStyle={{ paddingTop: 0 }}>
-      {/* Header Section */}
-      <YStack space="$4" p="$4" ai="center" bg={sectionBg}>
-        <H2 color={textColor}>{recipe.title}</H2>
-        {recipe.image && (
-          <TamaguiImage
-            source={{ uri: recipe.image }}
-            style={{ width: '100%', height: 200, borderRadius: 12 }}
-            resizeMode="cover"
-          />
-        )}
-      </YStack>
-
-      {/* Ingredients Section */}
-      <YStack space="$2" p="$4" bg={sectionBg}>
-        <H2 color={textColor}>Ingredients</H2>
-        {recipe.ingredients.map((ingredient: string, index: number) => (
-          <Paragraph key={index} color="$color11">• {ingredient}</Paragraph>
-        ))}
-      </YStack>
-
-      {/* Steps Section */}
-      <YStack space="$2" p="$4" bg={sectionBg}>
-        <H2 color={textColor}>Steps</H2>
-        {recipe.steps.map((step: string, index: number) => (
-          <Paragraph key={index} color="$color11">{index + 1}. {step}</Paragraph>
-        ))}
-      </YStack>
-
-      {/* Notes Section */}
-      <YStack space="$2" p="$4" bg={sectionBg}>
-        <H2 color={textColor}>Notes</H2>
-        {recipe.notes ? (
-          <Paragraph color="$color11">{recipe.notes}</Paragraph>
-        ) : (
-          <Paragraph color="$color10" fontStyle="italic">No notes added yet.</Paragraph>
-        )}
-      </YStack>
-
-      {/* Details Section */}
-      <YStack space="$2" p="$4" bg={sectionBg}>
-        <H2 color={textColor}>Details</H2>
-        <Paragraph color="$color11">Category: {recipe.category}</Paragraph>
-        <Paragraph color="$color11">Created: {createdDate}</Paragraph>
-        <Paragraph color="$color11">Last Updated: {updatedDate}</Paragraph>
-      </YStack>
-
-      {/* Actions */}
-      <XStack space="$4" p="$4" jc="space-around">
-        <Button
-          theme="active"
-          icon={Edit3}
-          onPress={handleEditRecipe}
-          flex={1}
-          animation="bouncy"
-          pressStyle={{ scale: 0.95 }}
-        >
-          Edit Recipe
-        </Button>
-        <Button
-          theme="alt1"
-          icon={Notebook}
-          onPress={handleAddNotes}
-          flex={1}
-          animation="bouncy"
-          pressStyle={{ scale: 0.95 }}
-        >
-          View Notes
-        </Button>
+    <YStack f={1} bg="$background">
+      {/* Header */}
+      <XStack
+        ai="center"
+        jc="space-between"
+        p="$4"
+        bg="$backgroundStrong"
+        elevation="$2"
+      >
+        <Button icon={ArrowLeft} circular onPress={() => router.back()} />
+        <H2>{recipe.title}</H2>
+        <YStack w={40} /> {/* Spacer to center the title */}
       </XStack>
-    </ScrollView>
+
+      <ScrollView>
+        {/* Recipe Image */}
+        {recipe.image && (
+          <YStack p="$4" ai="center">
+            <TamaguiImage
+              source={{ uri: recipe.image }}
+              style={{ width: '100%', height: 200, borderRadius: 12 }}
+              resizeMode="cover"
+            />
+          </YStack>
+        )}
+
+        {/* Ingredients Section */}
+        <YStack space="$2" p="$4" bg={sectionBg}>
+          <H2 color={textColor}>Ingredients</H2>
+          {recipe.ingredients.map((ingredient: string, index: number) => (
+            <Paragraph key={index} color="$color11">• {ingredient}</Paragraph>
+          ))}
+        </YStack>
+
+        {/* Steps Section */}
+        <YStack space="$2" p="$4" bg={sectionBg}>
+          <H2 color={textColor}>Steps</H2>
+          {recipe.steps.map((step: string, index: number) => (
+            <Paragraph key={index} color="$color11">{index + 1}. {step}</Paragraph>
+          ))}
+        </YStack>
+
+        {/* Notes Section */}
+        <YStack space="$2" p="$4" bg={sectionBg}>
+          <H2 color={textColor}>Notes</H2>
+          {recipe.notes ? (
+            <Paragraph color="$color11">{recipe.notes}</Paragraph>
+          ) : (
+            <Paragraph color="$color10" fontStyle="italic">No notes added yet.</Paragraph>
+          )}
+        </YStack>
+
+        {/* Details Section */}
+        <YStack space="$2" p="$4" bg={sectionBg}>
+          <H2 color={textColor}>Details</H2>
+          <Paragraph color="$color11">Category: {recipe.category}</Paragraph>
+          <Paragraph color="$color11">Created: {createdDate}</Paragraph>
+          <Paragraph color="$color11">Last Updated: {updatedDate}</Paragraph>
+        </YStack>
+
+        {/* Actions */}
+        <XStack space="$4" p="$4" jc="space-around">
+          <Button
+            theme="active"
+            icon={Edit3}
+            onPress={handleEditRecipe}
+            flex={1}
+            animation="bouncy"
+            pressStyle={{ scale: 0.95 }}
+          >
+            Edit Recipe
+          </Button>
+          <Button
+            theme="alt1"
+            icon={Notebook}
+            onPress={handleAddNotes}
+            flex={1}
+            animation="bouncy"
+            pressStyle={{ scale: 0.95 }}
+          >
+            View Notes
+          </Button>
+        </XStack>
+      </ScrollView>
+    </YStack>
   );
 }
