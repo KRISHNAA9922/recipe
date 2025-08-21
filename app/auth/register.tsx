@@ -48,7 +48,7 @@ export default function RegisterScreen() {
   };
 
   const handleRegister = async () => {
-    console.log('Registration attempt started');
+   // console.log('Registration attempt started');
     setMessage('');
 
     if (!validateInputs()) {
@@ -58,7 +58,7 @@ export default function RegisterScreen() {
     showMessage('Creating your account...', 'info');
 
     try {
-      console.log('Sending registration request...', { email, name });
+      //console.log('Sending registration request...', { email, name });
       
       const { data } = await register({
         variables: {
@@ -66,7 +66,7 @@ export default function RegisterScreen() {
         }
       });
 
-      console.log('Registration response:', data);
+      //console.log('Registration response:', data);
 
       if (data?.register?.token) {
         showMessage('Account created successfully!', 'success');
@@ -78,19 +78,19 @@ export default function RegisterScreen() {
             {
               text: 'OK',
               onPress: () => {
-                console.log('Navigating to login...');
+                //console.log('Navigating to login...');
                 router.replace('/auth/login');
               }
             }
           ]
         );
       } else {
-        console.log('Registration failed - no token received');
+       // console.log('Registration failed - no token received');
         showMessage('Registration failed - please try again', 'error');
         Alert.alert('Registration Failed', 'No token received from server');
       }
     } catch (error: any) {
-      console.error('Registration error:', error);
+      //console.error('Registration error:', error);
       const errorMessage = error.message || 'Failed to register. Please try again.';
       showMessage(errorMessage, 'error');
       Alert.alert('Registration Error', errorMessage);

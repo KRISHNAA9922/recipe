@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setUser(JSON.parse(storedUser));
       }
     } catch (error) {
-      console.error('Error loading user:', error);
+      //console.error('Error loading user:', error);
     } finally {
       setLoading(false);
     }

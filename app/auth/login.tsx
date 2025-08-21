@@ -25,7 +25,7 @@ export default function LoginScreen() {
   };
 
   const handleLogin = async () => {
-    console.log('Login attempt started');
+   // console.log('Login attempt started');
     setMessage('');
     
     if (!email || !password) {
@@ -42,31 +42,31 @@ export default function LoginScreen() {
     showMessage('Logging you in...', 'info');
 
     try {
-      console.log('Sending login request...');
+    //  console.log('Sending login request...');
       const { data } = await login({
         variables: {
           input: { email, password }
         }
       });
 
-      console.log('Login response received:', data);
+      //console.log('Login response received:', data);
 
       if (data?.login?.token) {
         showMessage('Login successful! Redirecting...', 'success');
         
         await authLogin(data.login.token, data.login.user);
-        console.log('Auth context updated successfully');
+       // console.log('Auth context updated successfully');
         
         setTimeout(() => {
           router.replace('/home');
         }, 1000);
       } else {
-        console.log('No token in response');
+        //console.log('No token in response');
         showMessage('Login failed - invalid response from server', 'error');
         Alert.alert('Login Failed', 'Invalid response from server');
       }
     } catch (error: any) {
-      console.error('Login error:', error);
+      //console.error('Login error:', error);
       const errorMessage = error.message || 'Failed to login. Please try again.';
       showMessage(errorMessage, 'error');
       Alert.alert('Login Error', errorMessage);

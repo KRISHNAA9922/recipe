@@ -27,7 +27,7 @@ export function RecipeNotesScreen({ route }: { route : any }) {
       refetch(); // Refresh the notes list
     },
     onError: (error) => {
-      console.error('Error creating note:', error);
+      //console.error('Error creating note:', error);
     }
   });
 
@@ -37,7 +37,7 @@ export function RecipeNotesScreen({ route }: { route : any }) {
       refetch(); // Refresh the notes list
     },
     onError: (error) => {
-      console.error('Error deleting note:', error);
+     // console.error('Error deleting note:', error);
     }
   });
 

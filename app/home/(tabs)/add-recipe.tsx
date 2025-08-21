@@ -39,7 +39,7 @@ export default function AddRecipeScreen() {
     onError: (error) => {
       // Use Tamagui AlertDialog for error instead of native Alert
       // You can trigger it here or handle via state
-      console.error('Error:', error);
+     // console.error('Error:', error);
     },
   });
 
@@ -66,7 +66,7 @@ export default function AddRecipeScreen() {
         }
       });
     } catch (error) {
-      console.error('Error saving recipe:', error);
+      //console.error('Error saving recipe:', error);
     }
   };
 
