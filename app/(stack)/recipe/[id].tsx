@@ -146,7 +146,7 @@ export default function RecipeDetailScreen() {
           animation="bouncy"
           pressStyle={{ scale: 0.95 }}
         >
-          Add Notes
+          View Notes
         </Button>
       </XStack>
     </ScrollView>

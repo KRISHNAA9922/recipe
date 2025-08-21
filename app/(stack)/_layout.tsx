@@ -6,13 +6,13 @@ export default function StackLayout() {
       <Stack.Screen 
         name="index" 
         options={{ 
-    header: () => null 
-  }} 
+          header: () => null 
+        }} 
       />
-      <Stack.Screen 
+      <Stack.Screen   
         name="login" 
         options={{ 
-          title: 'Login',
+          title: 'Login', 
           header: () => null 
         }} 
       />
@@ -20,6 +20,27 @@ export default function StackLayout() {
         name="register" 
         options={{ 
           title: 'Register',
+          header: () => null
+        }} 
+      />
+      <Stack.Screen 
+        name="recipe/[id]" 
+        options={{ 
+          title: 'Recipe Details',
+          header: () => null
+        }} 
+      />
+      <Stack.Screen 
+        name="recipe-notes/[id]" 
+        options={{ 
+          title: 'Recipe Notes',
+          header: () => null
+        }} 
+      />
+      <Stack.Screen 
+        name="edit-recipe/[id]" 
+        options={{ 
+          title: 'Edit Recipe',
           header: () => null
         }} 
       />

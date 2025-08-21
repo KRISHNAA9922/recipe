@@ -1,5 +1,3 @@
-// app/(stack)/edit-recipe/[id].tsx
-
 import React, { useContext, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { useRouter, useLocalSearchParams } from 'expo-router';

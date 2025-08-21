@@ -135,7 +135,7 @@ export default function RecipeNotesScreen() {
             animation="bouncy"
             pressStyle={{ scale: 0.95 }}
           >
-            {saving ? 'Saving…' : 'Save Notes'}
+            {saving ? 'Saving…' : 'Update Notes'}
           </Button>
           <Button theme="alt1" size="$5" onPress={() => router.back()}>
             Cancel
